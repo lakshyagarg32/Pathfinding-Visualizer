@@ -1,0 +1,8 @@
+.grid{
+    margin: 100px 0 0;
+    align-items: center;
+}
+.row{
+    width: fit-content;
+    margin:0 auto;
+}
