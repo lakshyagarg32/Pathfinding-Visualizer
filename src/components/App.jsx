@@ -3,6 +3,7 @@ import "./App.css"
 import Node from "./node/node";
 import visualizeDijkstra from "./algorithms/dijkstra";
 import visulaizeBFS from "./algorithms/BFS";
+import visulaizeDFS from "./algorithms/Dfs";
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
@@ -140,6 +141,12 @@ function App(){
             visulaizeBFS(grid);
             }} > 
             Visualize Breadth First Search
+        </button>
+        <button onClick={() => {
+            clearAlgo(grid);
+            visulaizeDFS(grid);
+            }} > 
+            Visualize Depth First Search
         </button>
         <button onClick={() => resetBoard()}>
             Clear Board
