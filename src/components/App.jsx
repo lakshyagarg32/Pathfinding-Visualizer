@@ -4,8 +4,7 @@ import Node from "./node/node";
 import visualizeDijkstra from "./algorithms/dijkstra";
 import visulaizeBFS from "./algorithms/BFS";
 import visulaizeDFS from "./algorithms/Dfs";
-import { faL } from "@fortawesome/free-solid-svg-icons";
-
+import visualizeAStar from "./algorithms/Astar";
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
@@ -132,9 +131,7 @@ function App(){
         if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
             return;
         }
-        if(mouseIsPressed){
-            const newGrid=getNewGridWeight(grid,row,col);
-            setGrid(newGrid);
+        if(keyIsPressed){
             setMouseIsPressed(true);
             return;
         }
@@ -176,6 +173,12 @@ function App(){
         </button>
         <button onClick={() => {
             clearAlgo(grid);
+            visualizeAStar(grid);
+            }}>
+            Visualize A* Algorithm
+        </button>
+        <button onClick={() => {
+            clearAlgo(grid);
             visulaizeBFS(grid);
             }} > 
             Visualize Breadth First Search
@@ -185,6 +188,9 @@ function App(){
             visulaizeDFS(grid);
             }} > 
             Visualize Depth First Search
+        </button>
+        <button onClick={()=>clearAlgo(grid)}>
+            Clear Path 
         </button>
         <button onClick={() => resetBoard()}>
             Clear Board

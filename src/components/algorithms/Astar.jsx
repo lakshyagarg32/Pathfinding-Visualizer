@@ -15,9 +15,24 @@ function getAllNodes(grid){
     return nodes;
 }
 
-function sortNodesbyDistance(unvisitednodes){
+function getHeuristic(){
+    const heuristic=[];
+    for(let row=0;row<20;row++){
+        const currentRow=[];
+        for(let col=0;col<50;col++){
+            const curr=Math.abs(row-FINISH_NODE_ROW) + Math.abs(col-FINISH_NODE_COL);
+            currentRow.push(curr);
+        }
+        heuristic.push(currentRow);
+    }
+    return heuristic;
+}
+
+function sortNodesbyDistance(unvisitednodes,heuristic){
     unvisitednodes.sort(function(a,b){
-        return a.distance-b.distance;
+        const d1=a.distance+heuristic[a.row][a.col];
+        const d2=b.distance+heuristic[b.row][b.col];
+        return d1-d2;
     });
 }
 
@@ -31,7 +46,7 @@ function getUnvisitedNeighbours(node,grid){
     return neighbours.filter(neighbour => !neighbour.isVisited && !neighbour.isWall);
 }
 
-function updateUnvisitedNeighbours(node,grid){
+function updateUnvisitedNeighbours(node,grid,heuristic){
     const unvisitedNeighbours=getUnvisitedNeighbours(node,grid);
     for(const neighbour of unvisitedNeighbours){
         var curr=1;
@@ -45,25 +60,26 @@ function updateUnvisitedNeighbours(node,grid){
     }
 }
 
-function dijkstras(grid,startNode,finishNode){
-    const visitedInOrder=[];
+function astar(grid,startNode,finishNode){
+    const heuristic=getHeuristic();
     startNode.distance=0;
+    const visitedInOrder=[];
     const unvisitednodes=getAllNodes(grid);
-    while(!!unvisitednodes.length){
-        sortNodesbyDistance(unvisitednodes);
-        const closestNode=unvisitednodes.shift();
-        if(closestNode.isWall){
+    while(unvisitednodes.length){
+        sortNodesbyDistance(unvisitednodes,heuristic);
+        const currentNode=unvisitednodes.shift();
+        if(currentNode.isWall){
             continue;
         }
-        if(closestNode.distance===Infinity){
+        if(currentNode.distance===Infinity){
             return visitedInOrder;
         }
-        closestNode.isVisited=true;
-        visitedInOrder.push(closestNode);
-        if(closestNode===finishNode){
+        currentNode.isVisited=true;
+        visitedInOrder.push(currentNode);
+        if(currentNode===finishNode){
             return visitedInOrder;
         }
-        updateUnvisitedNeighbours(closestNode,grid);
+        updateUnvisitedNeighbours(currentNode,grid,heuristic);
     }
 }
 
@@ -86,7 +102,7 @@ function animateShortestPath(nodesInShortestPathOrder){
     }
 }
 
-function animateDijkstra(visitedNodesInOrder,nodesInShortestPathOrder){
+function animateAStar(visitedNodesInOrder,nodesInShortestPathOrder){
     for(let i=0;i<=visitedNodesInOrder.length;i++){
         if(i==visitedNodesInOrder.length){
             setTimeout(function(){
@@ -101,12 +117,12 @@ function animateDijkstra(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visualizeDijkstra(grid){
+function visualizeAStar(grid){
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-    const visitedNodesInOrder = dijkstras(grid, startNode, finishNode);
+    const visitedNodesInOrder = astar(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
-    animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+    animateAStar(visitedNodesInOrder, nodesInShortestPathOrder);
 }
 
-export default visualizeDijkstra;
+export default visualizeAStar;
