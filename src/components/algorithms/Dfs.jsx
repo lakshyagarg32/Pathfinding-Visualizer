@@ -66,12 +66,6 @@ function animateShortestPath(nodesInShortestPathOrder){
         setTimeout(() => {
           const {row,col} = nodesInShortestPathOrder[i];
           document.getElementById(`node-${row}-${col}`).className ='node node-shortest-path';
-          if(row===START_NODE_ROW && col===START_NODE_COL){
-            document.getElementById(`node-${row}-${col}`).className ='node node-start';
-          }
-          else if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
-            document.getElementById(`node-${row}-${col}`).className ='node node-finish';
-          }
         }, 50 * i);
     }
 }
@@ -87,12 +81,6 @@ function animateDFS(visitedNodesInOrder,nodesInShortestPathOrder){
         setTimeout(function(){
             const {row,col}=visitedNodesInOrder[i];
             document.getElementById(`node-${row}-${col}`).className="node node-visited";
-            if(row===START_NODE_ROW && col===START_NODE_COL){
-                document.getElementById(`node-${row}-${col}`).className ='node node-start';
-              }
-            else if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
-                document.getElementById(`node-${row}-${col}`).className ='node node-finish';
-            }
         },10*i);
     }
 }

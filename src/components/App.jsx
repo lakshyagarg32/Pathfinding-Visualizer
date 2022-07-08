@@ -20,6 +20,7 @@ function createNode(col,row){
         isVisited: false,
         isWall: false,
         previousNode: null,
+        isWeight:false,
     };
     return node;
 }
@@ -44,14 +45,6 @@ function App(){
         const temp=getInitialGrid();
         setGrid(temp);
     },[])
-
-    document.addEventListener(
-        "mouseup",
-        () => {
-            setMouseIsPressed(false);
-        },
-        {once:false}
-    );
 
     function resetBoard(){
         const temp=getInitialGrid();
@@ -128,6 +121,10 @@ function App(){
         setGrid(newGrid);
     }
 
+    function handleMouseUp(){
+        setMouseIsPressed(false);
+    }
+
     return (
         <>
         <button onClick={() => {
@@ -156,7 +153,7 @@ function App(){
                 return (
                     <div className="row" key={rowidx}>
                         {row.map(function(node,nodeidx){
-                            const {row,col,isFinish,isStart,isWall}=node;
+                            const {row,col,isFinish,isStart,isWall,isWeight}=node;
                             return (<Node 
                                 key={nodeidx}
                                 col={col}
@@ -164,9 +161,11 @@ function App(){
                                 isStart={isStart}
                                 isFinish={isFinish}
                                 isWall={isWall}
+                                isWeight={isWeight}
                                 mouseIsPressed={mouseIsPressed}
                                 onMouseDown={(row,col) => handleMouseDown(row,col)}
                                 onMouseEnter={(row,col) => handleMouseEnter(row,col)}
+                                onMouseUp={()=>handleMouseUp()}
                             />)
                         })}
                     </div>
