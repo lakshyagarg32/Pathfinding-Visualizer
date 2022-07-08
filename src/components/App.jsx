@@ -2,9 +2,11 @@ import React,{useState,useEffect} from "react";
 import "./App.css"
 import Node from "./node/node";
 import visualizeDijkstra from "./algorithms/dijkstra";
-import visulaizeBFS from "./algorithms/BFS";
-import visulaizeDFS from "./algorithms/Dfs";
+import visualizeBFS from "./algorithms/BFS";
+import visualizeDFS from "./algorithms/Dfs";
 import visualizeAStar from "./algorithms/Astar";
+import AppBar from "./appbar/appbar";
+
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
@@ -165,36 +167,15 @@ function App(){
 
     return (
         <>
-        <button onClick={() => {
-            clearAlgo(grid);
-            visualizeDijkstra(grid);
-            }}>
-            Visualize Dijkstra's Algorithm
-        </button>
-        <button onClick={() => {
-            clearAlgo(grid);
-            visualizeAStar(grid);
-            }}>
-            Visualize A* Algorithm
-        </button>
-        <button onClick={() => {
-            clearAlgo(grid);
-            visulaizeBFS(grid);
-            }} > 
-            Visualize Breadth First Search
-        </button>
-        <button onClick={() => {
-            clearAlgo(grid);
-            visulaizeDFS(grid);
-            }} > 
-            Visualize Depth First Search
-        </button>
-        <button onClick={()=>clearAlgo(grid)}>
-            Clear Path 
-        </button>
-        <button onClick={() => resetBoard()}>
-            Clear Board
-        </button>
+        <AppBar 
+            grid={grid}
+            clearAlgo={clearAlgo}
+            visualizeDijkstra={visualizeDijkstra}
+            visualizeAStar={visualizeAStar}
+            visualizeBFS={visualizeBFS}
+            visualizeDFS={visualizeDFS}
+            resetBoard={resetBoard}
+        />
         <div className="grid">
             {grid.map(function(row,rowidx){
                 return (
