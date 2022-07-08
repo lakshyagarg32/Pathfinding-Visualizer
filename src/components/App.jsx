@@ -4,6 +4,7 @@ import Node from "./node/node";
 import visualizeDijkstra from "./algorithms/dijkstra";
 import visulaizeBFS from "./algorithms/BFS";
 import visulaizeDFS from "./algorithms/Dfs";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
@@ -40,6 +41,7 @@ function getInitialGrid(){
 function App(){
     const [grid,setGrid]=useState([]);
     const [mouseIsPressed,setMouseIsPressed]=useState(false);
+    const [keyIsPressed,setKeyIsPressed]=useState(false);
 
     useEffect(function(){
         const temp=getInitialGrid();
@@ -67,14 +69,18 @@ function App(){
         for(let row=0;row<20;row++){
             for(let col=0;col<50;col++){
                 if(row===START_NODE_ROW && col===START_NODE_COL){
-                    document.getElementById(`node-${row}-${col}`).className ='node node-start';
+                    document.getElementById(`node-${row}-${col}`).className ='node';
                 }
                 else if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
-                    document.getElementById(`node-${row}-${col}`).className ='node node-finish';
+                    document.getElementById(`node-${row}-${col}`).className ='node';
                 }
                 else if(grid[row][col].isWall===true){
                     temp[row][col].isWall=true;
                     document.getElementById(`node-${row}-${col}`).className="node node-wall";
+                }
+                else if(grid[row][col].isWeight===true){
+                    temp[row][col].isWeight=true;
+                    document.getElementById(`node-${row}-${col}`).className="node";
                 }
                 else{
                     document.getElementById(`node-${row}-${col}`).className ='node';
@@ -84,12 +90,36 @@ function App(){
         setGrid(temp);
     }
 
+    function getNewGridWeight(grid,row,col){
+        const newGrid=grid.slice();
+        const node=newGrid[row][col];
+        const newNode={
+            ...node,
+            isWeight:true,
+            isWall:false,
+        }
+        newGrid[row][col]=newNode;
+        return newGrid;
+    }
+
+    function handleKeyDown(event){
+        const {key}=event;
+        if(key==='w'){
+            setKeyIsPressed(true);
+        }
+    }
+
+    function handleKeyUp(){
+        setKeyIsPressed(false);
+    }
+
     function getNewGridWall(grid,row,col){
         const newGrid=grid.slice();
         const node=newGrid[row][col];
         const newNode={
             ...node,
             isWall:true,
+            isWeight:false,
         };
         newGrid[row][col]=newNode;
         return newGrid;
@@ -102,19 +132,30 @@ function App(){
         if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
             return;
         }
+        if(mouseIsPressed){
+            const newGrid=getNewGridWeight(grid,row,col);
+            setGrid(newGrid);
+            setMouseIsPressed(true);
+            return;
+        }
         const newGrid=getNewGridWall(grid,row,col);
         setGrid(newGrid);
         setMouseIsPressed(true);
     }
 
     function handleMouseEnter(row,col){
-        if(!mouseIsPressed){
-            return;
-        }
         if(row===START_NODE_ROW && col===START_NODE_COL){
             return;
         }
         if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
+            return;
+        }
+        if(keyIsPressed){
+            const newGrid=getNewGridWeight(grid,row,col);
+            setGrid(newGrid);
+            return;
+        }
+        if(!mouseIsPressed){
             return;
         }
         const newGrid=getNewGridWall(grid,row,col);
@@ -162,7 +203,8 @@ function App(){
                                 isFinish={isFinish}
                                 isWall={isWall}
                                 isWeight={isWeight}
-                                mouseIsPressed={mouseIsPressed}
+                                onKeyDown={(event)=>handleKeyDown(event)}
+                                onKeyUp={()=>handleKeyUp()}
                                 onMouseDown={(row,col) => handleMouseDown(row,col)}
                                 onMouseEnter={(row,col) => handleMouseEnter(row,col)}
                                 onMouseUp={()=>handleMouseUp()}

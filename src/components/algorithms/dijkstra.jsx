@@ -34,8 +34,12 @@ function getUnvisitedNeighbours(node,grid){
 function updateUnvisitedNeighbours(node,grid){
     const unvisitedNeighbours=getUnvisitedNeighbours(node,grid);
     for(const neighbour of unvisitedNeighbours){
-        if(neighbour.distance>node.distance+1){
-            neighbour.distance=node.distance+1;
+        var curr=1;
+        if(neighbour.isWeight){
+            curr=10;
+        }
+        if(neighbour.distance>node.distance+curr){
+            neighbour.distance=node.distance+curr;
             neighbour.previousNode=node;
         }
     }
