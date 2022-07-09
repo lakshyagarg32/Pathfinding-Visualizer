@@ -2,6 +2,7 @@ import React,{useState,useEffect} from "react";
 import "./App.css"
 import Node from "./node/node";
 import AppBar from "./appbar/appbar";
+import InfoBox from "./infobox/infobox";
 
 function App(){
     const [grid,setGrid]=useState([]);
@@ -13,6 +14,8 @@ function App(){
     const [finishCol,setFinishCol]=useState(35);
     const [startPress,setStartPress]=useState(false);
     const [finishPress,setFinishPress]=useState(false);
+    const [desc1,setDesc1]=useState(null);
+    const [cost,setCost]=useState(null);
 
     useEffect(function(){
         const temp=getInitialGrid();
@@ -249,7 +252,14 @@ function App(){
             startCol={startCol}
             finishRow={finishRow}
             finishCol={finishCol}
+            setDesc1={setDesc1}
+            setCost={setCost}
         />
+        <InfoBox />
+        <div className="description">
+        {desc1?<h5>{desc1}</h5>:null}
+        {cost?<h5>Cost of the path is {cost}</h5>:null}
+        </div>
         <div className="grid">
             {grid.map(function(row,rowidx){
                 return (

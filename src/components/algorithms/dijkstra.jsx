@@ -1,5 +1,6 @@
 import React from "react";
 
+let cost=0;
 function getAllNodes(grid){
     const nodes=[];
     for(const row of grid){
@@ -66,6 +67,12 @@ function shortestPath(finishNode){
     const nodesInShortestPathOrder=[];
     let currentnode=finishNode;
     while(currentnode!=null){
+        if(currentnode.isWeight){
+            cost+=10;
+        }
+        else{
+            cost+=1;
+        }
         nodesInShortestPathOrder.unshift(currentnode);
         currentnode=currentnode.previousNode;
     }
@@ -96,12 +103,15 @@ function animateDijkstra(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visualizeDijkstra(grid,startRow,startCol,finishRow,finishCol){
+function visualizeDijkstra(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost){
     const startNode = grid[startRow][startCol];
     const finishNode = grid[finishRow][finishCol];
     const visitedNodesInOrder = dijkstras(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
     animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+    setDesc1("Dijkstra's Algorithm is weighted and guarantees the shortest path !");
+    setCost(cost-1);
+    cost=0;
 }
 
 export default visualizeDijkstra;

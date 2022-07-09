@@ -9,41 +9,45 @@ import visualizeDFS from '../algorithms/Dfs';
 import "./appbar.css"
 
 function BasicExample(props) {
-    const {grid,clearAlgo,resetBoard,startRow,startCol,finishRow,finishCol}=props;
+    const {grid,clearAlgo,resetBoard,startRow,startCol,finishRow,finishCol,setDesc1,setCost}=props;
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" className='appbar'>
       <Container>
-        <Navbar.Brand>Pathfinding Visualizer</Navbar.Brand>
+        <Navbar.Brand className='heading'>Pathfinding Visualizer</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-          <NavDropdown title="Algorithms" id="basic-nav-dropdown">
+          <NavDropdown menuVariant="dark" title="Algorithms" id="basic-nav-dropdown" className='menu-title'>
               <NavDropdown.Item onClick={()=>{
                 clearAlgo(grid);
-                visualizeDijkstra(grid,startRow,startCol,finishRow,finishCol);
+                visualizeDijkstra(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost);
               }}>
               Dijkstra's Algorithm</NavDropdown.Item>
               <NavDropdown.Item onClick={()=>{
                 clearAlgo(grid);
-                visualizeAStar(grid,startRow,startCol,finishRow,finishCol);
+                visualizeAStar(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost);
               }}>
               A* Search</NavDropdown.Item>
               <NavDropdown.Item onClick={()=>{
                 clearAlgo(grid);
-                visualizeBFS(grid,startRow,startCol,finishRow,finishCol);
+                visualizeBFS(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost);
               }}>
               Breadth-First Search</NavDropdown.Item>
               <NavDropdown.Item onClick={()=>{
                 clearAlgo(grid);
-                visualizeDFS(grid,startRow,startCol,finishRow,finishCol);
+                visualizeDFS(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost);
               }}>
               Depth-First Search</NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link onClick={()=>{
+            <Nav.Link className='button' onClick={()=>{
+                setDesc1(null);
+                setCost(null);
                 clearAlgo(grid);
             }}>
             Clear Path</Nav.Link>
-            <Nav.Link onClick={()=>{
+            <Nav.Link className='button' onClick={()=>{
+                setDesc1(null);
+                setCost(null);
                 resetBoard();
             }}>Clear Board</Nav.Link>
           </Nav>

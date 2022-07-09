@@ -1,0 +1,29 @@
+.box{
+    margin-top: 2%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.item{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+h5{
+    margin: 0%;
+}
+.node-temp{
+    width: 25px;
+    height: 25px;
+    outline: 1px solid rgb(175, 216, 248);
+    padding: 0%;
+}
+.visited-node-1{
+    background-color: rgba(0, 190, 218, 0.75);
+}
+.visited-node-2{
+    background-color: rgba(17, 104, 217, 0.75);
+}
+.shortest{
+    background-color: rgb(255, 254, 106);
+}

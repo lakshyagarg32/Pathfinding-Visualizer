@@ -1,6 +1,7 @@
 import React from "react";
 
 var check=0;
+let cost=0;
 
 function DFShelper(grid,visitedInOrder,currentNode,finishNode){
     currentNode.isVisited=true;
@@ -51,6 +52,12 @@ function shortestPath(finishNode){
     const nodesInShortestPathOrder=[];
     let currentnode=finishNode;
     while(currentnode!=null){
+        if(currentnode.isWeight){
+            cost+=10;
+        }
+        else{
+            cost+=1;
+        }
         nodesInShortestPathOrder.unshift(currentnode);
         currentnode=currentnode.previousNode;
     }
@@ -81,13 +88,16 @@ function animateDFS(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visulaizeDFS(grid,startRow,startCol,finishRow,finishCol){
+function visulaizeDFS(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost){
     check=0;
     const startNode = grid[startRow][startCol];
     const finishNode = grid[finishRow][finishCol];
     const visitedNodesInOrder = DFS(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
     animateDFS(visitedNodesInOrder, nodesInShortestPathOrder);
+    setDesc1("Depth-first Search is unweighted and does not guarantees the shortest path !");
+    setCost(cost-1);
+    cost=0;
 }
 
 export default visulaizeDFS;

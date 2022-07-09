@@ -1,0 +1,18 @@
+.appbar{
+    background-color: #CDF0EA !important;
+    height: 80px;
+}
+.heading{
+    font-weight:700 !important;
+    font-size:30px !important;
+}
+.button{
+    font-size: 19px !important;
+    color: #413F42 !important;
+    font-weight: 600 !important;
+}
+#basic-nav-dropdown{
+    font-size: 19px !important;
+    color: #413F42 !important;
+    font-weight: 600 !important;
+}
