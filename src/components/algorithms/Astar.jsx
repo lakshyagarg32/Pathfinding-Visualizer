@@ -1,10 +1,5 @@
 import React from "react";
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
-
 function getAllNodes(grid){
     const nodes=[];
     for(const row of grid){
@@ -15,12 +10,12 @@ function getAllNodes(grid){
     return nodes;
 }
 
-function getHeuristic(){
+function getHeuristic(finishNode){
     const heuristic=[];
     for(let row=0;row<20;row++){
         const currentRow=[];
         for(let col=0;col<50;col++){
-            const curr=Math.abs(row-FINISH_NODE_ROW) + Math.abs(col-FINISH_NODE_COL);
+            const curr=Math.abs(row-finishNode.row) + Math.abs(col-finishNode.col);
             currentRow.push(curr);
         }
         heuristic.push(currentRow);
@@ -61,7 +56,7 @@ function updateUnvisitedNeighbours(node,grid,heuristic){
 }
 
 function astar(grid,startNode,finishNode){
-    const heuristic=getHeuristic();
+    const heuristic=getHeuristic(finishNode);
     startNode.distance=0;
     const visitedInOrder=[];
     const unvisitednodes=getAllNodes(grid);
@@ -117,9 +112,9 @@ function animateAStar(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visualizeAStar(grid){
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+function visualizeAStar(grid,startRow,startCol,finishRow,finishCol){
+    const startNode = grid[startRow][startCol];
+    const finishNode = grid[finishRow][finishCol];
     const visitedNodesInOrder = astar(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
     animateAStar(visitedNodesInOrder, nodesInShortestPathOrder);

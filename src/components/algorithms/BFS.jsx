@@ -1,10 +1,5 @@
 import React from "react";
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
-
 function BFS(grid,startNode,finishNode){
     const visitedInOrder=[];
     const queue=[];
@@ -75,9 +70,9 @@ function animateBFS(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visulaizeBFS(grid){
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+function visulaizeBFS(grid,startRow,startCol,finishRow,finishCol){
+    const startNode = grid[startRow][startCol];
+    const finishNode = grid[finishRow][finishCol];
     const visitedNodesInOrder = BFS(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
     animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);

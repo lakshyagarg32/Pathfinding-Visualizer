@@ -1,9 +1,5 @@
 import React from "react";
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
 var check=0;
 
 function DFShelper(grid,visitedInOrder,currentNode,finishNode){
@@ -85,10 +81,10 @@ function animateDFS(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visulaizeDFS(grid){
+function visulaizeDFS(grid,startRow,startCol,finishRow,finishCol){
     check=0;
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const startNode = grid[startRow][startCol];
+    const finishNode = grid[finishRow][finishCol];
     const visitedNodesInOrder = DFS(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
     animateDFS(visitedNodesInOrder, nodesInShortestPathOrder);

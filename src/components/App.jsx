@@ -1,53 +1,86 @@
 import React,{useState,useEffect} from "react";
 import "./App.css"
 import Node from "./node/node";
-import visualizeDijkstra from "./algorithms/dijkstra";
-import visualizeBFS from "./algorithms/BFS";
-import visualizeDFS from "./algorithms/Dfs";
-import visualizeAStar from "./algorithms/Astar";
 import AppBar from "./appbar/appbar";
-
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
-
-function createNode(col,row){
-    const node={
-        col,
-        row,
-        isStart: row === START_NODE_ROW && col === START_NODE_COL,
-        isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
-        distance: Infinity,
-        isVisited: false,
-        isWall: false,
-        previousNode: null,
-        isWeight:false,
-    };
-    return node;
-}
-
-function getInitialGrid(){
-    const temp=[];
-    for(let row=0;row<20;row++){
-        const currentRow=[];
-        for(let col=0;col<50;col++){
-            currentRow.push(createNode(col,row));
-        }
-        temp.push(currentRow);
-    }
-    return temp;
-}
 
 function App(){
     const [grid,setGrid]=useState([]);
     const [mouseIsPressed,setMouseIsPressed]=useState(false);
     const [keyIsPressed,setKeyIsPressed]=useState(false);
+    const [startRow,setStartRow]=useState(10);
+    const [startCol,setStartCol]=useState(15);
+    const [finishRow,setFinishRow]=useState(10);
+    const [finishCol,setFinishCol]=useState(35);
+    const [startPress,setStartPress]=useState(false);
+    const [finishPress,setFinishPress]=useState(false);
 
     useEffect(function(){
         const temp=getInitialGrid();
         setGrid(temp);
     },[])
+
+    useEffect(()=>{
+        setGrid((prev)=>{
+            const temp=[];
+            for(let i=0;i<20;i++){
+                const row=[];
+                for(let j=0;j<50;j++){
+                    const curr=prev[i][j];
+                    if(i!=startRow || j!=startCol ){
+                        curr.isStart=false;
+                    }
+                    row.push(curr);
+                }
+                temp.push(row);
+            }
+            return temp;
+        })
+    },[startRow])
+
+    useEffect(()=>{
+        setGrid((prev)=>{
+            const temp=[];
+            for(let i=0;i<20;i++){
+                const row=[];
+                for(let j=0;j<50;j++){
+                    const curr=prev[i][j];
+                    if(i!=finishRow || j!=finishCol ){
+                        curr.isFinish=false;
+                    }
+                    row.push(curr);
+                }
+                temp.push(row);
+            }
+            return temp;
+        })
+    },[finishRow])
+
+    function createNode(col,row){
+        const node={
+            col,
+            row,
+            isStart: row === startRow && col === startCol,
+            isFinish: row === finishRow && col === finishCol,
+            distance: Infinity,
+            isVisited: false,
+            isWall: false,
+            previousNode: null,
+            isWeight:false,
+        };
+        return node;
+    }
+    
+    function getInitialGrid(){
+        const temp=[];
+        for(let row=0;row<20;row++){
+            const currentRow=[];
+            for(let col=0;col<50;col++){
+                currentRow.push(createNode(col,row));
+            }
+            temp.push(currentRow);
+        }
+        return temp;
+    }
 
     function resetBoard(){
         const temp=getInitialGrid();
@@ -55,10 +88,10 @@ function App(){
         for(let row=0;row<20;row++){
             for(let col=0;col<50;col++){
                 document.getElementById(`node-${row}-${col}`).className ='node';
-                if(row===START_NODE_ROW && col===START_NODE_COL){
+                if(row===startRow && col===startCol){
                     document.getElementById(`node-${row}-${col}`).className ='node node-start';
                 }
-                else if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
+                else if(row===finishRow && col===finishCol){
                     document.getElementById(`node-${row}-${col}`).className ='node node-finish';
                 }
             }
@@ -69,10 +102,10 @@ function App(){
         const temp=getInitialGrid();
         for(let row=0;row<20;row++){
             for(let col=0;col<50;col++){
-                if(row===START_NODE_ROW && col===START_NODE_COL){
+                if(row===startRow && col===startCol){
                     document.getElementById(`node-${row}-${col}`).className ='node';
                 }
-                else if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
+                else if(row===finishRow && col===finishCol){
                     document.getElementById(`node-${row}-${col}`).className ='node';
                 }
                 else if(grid[row][col].isWall===true){
@@ -91,18 +124,6 @@ function App(){
         setGrid(temp);
     }
 
-    function getNewGridWeight(grid,row,col){
-        const newGrid=grid.slice();
-        const node=newGrid[row][col];
-        const newNode={
-            ...node,
-            isWeight:true,
-            isWall:false,
-        }
-        newGrid[row][col]=newNode;
-        return newGrid;
-    }
-
     function handleKeyDown(event){
         const {key}=event;
         if(key==='w'){
@@ -114,55 +135,108 @@ function App(){
         setKeyIsPressed(false);
     }
 
-    function getNewGridWall(grid,row,col){
-        const newGrid=grid.slice();
-        const node=newGrid[row][col];
-        const newNode={
-            ...node,
-            isWall:true,
-            isWeight:false,
-        };
-        newGrid[row][col]=newNode;
-        return newGrid;
+    function updateWeight(row,col){
+        setGrid((prev)=>{
+            const temp=prev.slice();
+            temp[row][col].isWeight=true;
+            temp[row][col].isWall=false;
+            return temp;
+        })
+        return;
+    }
+
+    function updateWall(row,col){
+        setGrid((prev)=>{
+            const temp=prev.slice();
+            prev[row][col].isWall=true;
+            prev[row][col].isWeight=false;
+            return temp;
+        })
+        return;
+    }
+
+    function updateStart(row,col,prow,pcol){
+        setGrid((prev)=>{
+            prev[prow][pcol].isStart=false;
+            prev[row][col].isStart=true;
+            prev[row][col].isWall=false;
+            prev[row][col].isWeight=false;
+            return prev;
+        })
+        setStartRow(()=>{
+            return row;
+        })
+        setStartCol(()=>{
+            return col;
+        })
+        return;
+    }
+
+    function updateFinish(row,col,prow,pcol){
+        setGrid((prev)=>{
+            prev[prow][pcol].isFinish=false;
+            prev[row][col].isFinish=true;
+            prev[row][col].isWall=false;
+            prev[row][col].isWeight=false;
+            return prev;
+        })
+        setFinishRow(()=>{
+            return row;
+        })
+        setFinishCol(()=>{
+            return col;
+        })
+        return;
     }
 
     function handleMouseDown(row,col){
-        if(row===START_NODE_ROW && col===START_NODE_COL){
+        if(row===startRow && col===startCol){
+            setStartPress(true);
             return;
         }
-        if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
+        if(row===finishRow && col===finishCol){
+            setFinishPress(true);
             return;
         }
         if(keyIsPressed){
             setMouseIsPressed(true);
             return;
         }
-        const newGrid=getNewGridWall(grid,row,col);
-        setGrid(newGrid);
+        updateWall(row,col);
         setMouseIsPressed(true);
     }
 
     function handleMouseEnter(row,col){
-        if(row===START_NODE_ROW && col===START_NODE_COL){
+        if(row===startRow && col===startCol){
             return;
         }
-        if(row===FINISH_NODE_ROW && col===FINISH_NODE_COL){
+        if(row===finishRow && col===finishCol){
+            return;
+        }
+        if(startPress){
+            updateStart(row,col,startRow,startCol);
+            return;
+        }
+        if(finishPress){
+            updateFinish(row,col,finishRow,finishCol);
             return;
         }
         if(keyIsPressed){
-            const newGrid=getNewGridWeight(grid,row,col);
-            setGrid(newGrid);
+            updateWeight(row,col);
             return;
         }
         if(!mouseIsPressed){
             return;
         }
-        const newGrid=getNewGridWall(grid,row,col);
-        setGrid(newGrid);
+        updateWall(row,col);
+        return;
     }
 
     function handleMouseUp(){
         setMouseIsPressed(false);
+        setFinishPress(false);
+        setStartPress(false);
+        return;
     }
 
     return (
@@ -170,11 +244,11 @@ function App(){
         <AppBar 
             grid={grid}
             clearAlgo={clearAlgo}
-            visualizeDijkstra={visualizeDijkstra}
-            visualizeAStar={visualizeAStar}
-            visualizeBFS={visualizeBFS}
-            visualizeDFS={visualizeDFS}
             resetBoard={resetBoard}
+            startRow={startRow}
+            startCol={startCol}
+            finishRow={finishRow}
+            finishCol={finishCol}
         />
         <div className="grid">
             {grid.map(function(row,rowidx){

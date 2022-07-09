@@ -1,10 +1,5 @@
 import React from "react";
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
-
 function getAllNodes(grid){
     const nodes=[];
     for(const row of grid){
@@ -101,9 +96,9 @@ function animateDijkstra(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visualizeDijkstra(grid){
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+function visualizeDijkstra(grid,startRow,startCol,finishRow,finishCol){
+    const startNode = grid[startRow][startCol];
+    const finishNode = grid[finishRow][finishCol];
     const visitedNodesInOrder = dijkstras(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
     animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
