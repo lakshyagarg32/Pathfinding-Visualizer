@@ -40,6 +40,9 @@ function BFS(grid,startNode,finishNode){
 function shortestPath(finishNode){
     const nodesInShortestPathOrder=[];
     let currentnode=finishNode;
+    if(currentnode.previousNode===null){
+        return nodesInShortestPathOrder;
+    }
     while(currentnode!=null){
         if(currentnode.isWeight){
             cost+=10;
@@ -53,21 +56,23 @@ function shortestPath(finishNode){
     return nodesInShortestPathOrder;
 }
 
-function animateShortestPath(nodesInShortestPathOrder){
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function animateShortestPath(nodesInShortestPathOrder){
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
-        setTimeout(() => {
-          const {row,col} = nodesInShortestPathOrder[i];
-          document.getElementById(`node-${row}-${col}`).className ='node node-shortest-path';
-        }, 50 * i);
+        await delay(50);
+        const {row,col} = nodesInShortestPathOrder[i];
+        document.getElementById(`node-${row}-${col}`).className ='node node-shortest-path';
     }
 }
 
-function animateBFS(visitedNodesInOrder,nodesInShortestPathOrder){
+async function animateBFS(visitedNodesInOrder,nodesInShortestPathOrder){
     for(let i=0;i<=visitedNodesInOrder.length;i++){
         if(i==visitedNodesInOrder.length){
-            setTimeout(function(){
-                animateShortestPath(nodesInShortestPathOrder);
-            },10*i);
+            await delay(10*i);
+            await animateShortestPath(nodesInShortestPathOrder);
             return;
         }
         setTimeout(function(){
@@ -77,15 +82,20 @@ function animateBFS(visitedNodesInOrder,nodesInShortestPathOrder){
     }
 }
 
-function visulaizeBFS(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost){
+async function visulaizeBFS(grid,startRow,startCol,finishRow,finishCol,setDesc1,setCost){
     const startNode = grid[startRow][startCol];
     const finishNode = grid[finishRow][finishCol];
     const visitedNodesInOrder = BFS(grid, startNode, finishNode);
     const nodesInShortestPathOrder = shortestPath(finishNode);
-    animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);
     setDesc1("Breadth-first Search is unweighted and guarantees the shortest path !");
-    setCost(cost-1);
+    if(nodesInShortestPathOrder.length!=0){
+        setCost(cost-1);
+    }
+    else{
+        setCost("No path exists between the two nodes")
+    }
     cost=0;
+    await animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);
 }
 
 export default visulaizeBFS;

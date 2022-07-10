@@ -1,4 +1,4 @@
-import React,{useLayoutEffect,useState,useEffect, useRef} from "react";
+import React,{useState,useEffect, useRef} from "react";
 import "./App.css"
 import Node from "./node/node";
 import AppBar from "./appbar/appbar";
@@ -8,10 +8,10 @@ function App(){
     const [grid,setGrid]=useState([]);
     const [mouseIsPressed,setMouseIsPressed]=useState(false);
     const [keyIsPressed,setKeyIsPressed]=useState(false);
-    const [startRow,setStartRow]=useState(null);
-    const [startCol,setStartCol]=useState(null);
-    const [finishRow,setFinishRow]=useState(null);
-    const [finishCol,setFinishCol]=useState(null);
+    const [startRow,setStartRow]=useState(0);
+    const [startCol,setStartCol]=useState(0);
+    const [finishRow,setFinishRow]=useState(0);
+    const [finishCol,setFinishCol]=useState(5);
     const [startPress,setStartPress]=useState(false);
     const [finishPress,setFinishPress]=useState(false);
     const [desc1,setDesc1]=useState(null);
@@ -62,13 +62,12 @@ function App(){
 
     useEffect(function(){
         if(columns && rows){
-            const temp=getInitialGrid();
-            setGrid(temp);
+            resetBoard();
         }
     },[columns,rows]);
 
     useEffect(()=>{
-        if(columns && rows && startRow && startCol){
+        if(columns && rows){
             setGrid((prev)=>{
                 const temp=[];
                 for(let i=0;i<rows;i++){
@@ -88,7 +87,7 @@ function App(){
     },[startRow])
 
     useEffect(()=>{
-        if(columns && rows && finishRow && finishCol){
+        if(columns && rows){
             setGrid((prev)=>{
                 const temp=[];
                 for(let i=0;i<rows;i++){
@@ -123,7 +122,6 @@ function App(){
     }
     
     function getInitialGrid(){
-        if(startRow && startCol && finishRow && finishCol){
             const temp=[];
             for(let row=0;row<rows;row++){
                 const currentRow=[];
@@ -133,7 +131,6 @@ function App(){
                 temp.push(currentRow);
             }
             return temp;
-        }
     }
 
     function resetBoard(){
@@ -141,12 +138,9 @@ function App(){
         setGrid(temp);
         for(let row=0;row<rows;row++){
             for(let col=0;col<columns;col++){
-                document.getElementById(`node-${row}-${col}`).className ='node';
-                if(row===startRow && col===startCol){
-                    document.getElementById(`node-${row}-${col}`).className ='node node-start';
-                }
-                else if(row===finishRow && col===finishCol){
-                    document.getElementById(`node-${row}-${col}`).className ='node node-finish';
+                const myele=document.getElementById(`node-${row}-${col}`);
+                if(myele){
+                    myele.className="node";
                 }
             }
         }
@@ -156,22 +150,12 @@ function App(){
         const temp=getInitialGrid();
         for(let row=0;row<rows;row++){
             for(let col=0;col<columns;col++){
-                if(row===startRow && col===startCol){
-                    document.getElementById(`node-${row}-${col}`).className ='node';
-                }
-                else if(row===finishRow && col===finishCol){
-                    document.getElementById(`node-${row}-${col}`).className ='node';
-                }
-                else if(grid[row][col].isWall===true){
+                document.getElementById(`node-${row}-${col}`).className ='node';
+                if(grid[row][col].isWall===true){
                     temp[row][col].isWall=true;
-                    document.getElementById(`node-${row}-${col}`).className="node node-wall";
                 }
                 else if(grid[row][col].isWeight===true){
                     temp[row][col].isWeight=true;
-                    document.getElementById(`node-${row}-${col}`).className="node";
-                }
-                else{
-                    document.getElementById(`node-${row}-${col}`).className ='node';
                 }
             }
         }
@@ -202,8 +186,8 @@ function App(){
     function updateWall(row,col){
         setGrid((prev)=>{
             const temp=prev.slice();
-            prev[row][col].isWall=true;
-            prev[row][col].isWeight=false;
+            temp[row][col].isWall=true;
+            temp[row][col].isWeight=false;
             return temp;
         })
         return;
@@ -310,7 +294,7 @@ function App(){
         <InfoBox />
         <div className="description">
         {desc1?<h5>{desc1}</h5>:<h5>Pick an Algorithm and visualize it</h5>}
-        {cost?<h5>Cost of the path is {cost}</h5>:<h5>Drag mouse to draw walls, Hold W and hover to add weights</h5>}
+        {cost && typeof(cost)=="number" ?<h5>Cost of the path is {cost}</h5>:cost===null?<h5>Drag mouse to draw walls, Hold W and hover to add weights</h5>:<h5>{cost}</h5>}
         </div>
         </div>
         <div className="grid">
