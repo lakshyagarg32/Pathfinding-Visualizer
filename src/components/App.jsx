@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React,{useLayoutEffect,useState,useEffect, useRef} from "react";
 import "./App.css"
 import Node from "./node/node";
 import AppBar from "./appbar/appbar";
@@ -8,54 +8,103 @@ function App(){
     const [grid,setGrid]=useState([]);
     const [mouseIsPressed,setMouseIsPressed]=useState(false);
     const [keyIsPressed,setKeyIsPressed]=useState(false);
-    const [startRow,setStartRow]=useState(10);
-    const [startCol,setStartCol]=useState(15);
-    const [finishRow,setFinishRow]=useState(10);
-    const [finishCol,setFinishCol]=useState(35);
+    const [startRow,setStartRow]=useState(null);
+    const [startCol,setStartCol]=useState(null);
+    const [finishRow,setFinishRow]=useState(null);
+    const [finishCol,setFinishCol]=useState(null);
     const [startPress,setStartPress]=useState(false);
     const [finishPress,setFinishPress]=useState(false);
     const [desc1,setDesc1]=useState(null);
     const [cost,setCost]=useState(null);
+    const ref=useRef(null);
+    const [dimension, setDimension] = useState(null);
+    const [columns,setColumns]=useState(null)
+    const [windowHeight,setWindowHeight]=useState(null)
+    const [rows,setRows]=useState(null);
+
+    useEffect(() => {
+        function handleResize(){
+            setWindowHeight(window.innerHeight)
+        }
+        window.addEventListener('resize', handleResize)
+        handleResize();
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    useEffect(() => {
+        function handleResize() {
+          setDimension({
+            width: ref.current.offsetWidth,
+            height: ref.current.offsetHeight,
+          });
+        }
+        window.addEventListener("resize", handleResize);
+        handleResize();
+        return () => window.removeEventListener("resize", handleResize);        
+      }, []);
+
+      useEffect(()=>{
+        if(windowHeight && dimension){
+            const r=Math.floor((windowHeight-dimension.height)/26);
+            setRows(r);
+            const c=Math.floor(dimension.width/26);
+            setColumns(c);
+
+            const r1=Math.floor(r/2);
+            const c1=Math.floor(c/4);
+            const c2=Math.floor(3*c/4);
+            setStartRow(r1);
+            setStartCol(c1);
+            setFinishRow(r1);
+            setFinishCol(c2);
+        }
+    },[windowHeight,dimension]);
 
     useEffect(function(){
-        const temp=getInitialGrid();
-        setGrid(temp);
-    },[])
+        if(columns && rows){
+            const temp=getInitialGrid();
+            setGrid(temp);
+        }
+    },[columns,rows]);
 
     useEffect(()=>{
-        setGrid((prev)=>{
-            const temp=[];
-            for(let i=0;i<20;i++){
-                const row=[];
-                for(let j=0;j<50;j++){
-                    const curr=prev[i][j];
-                    if(i!=startRow || j!=startCol ){
-                        curr.isStart=false;
+        if(columns && rows && startRow && startCol){
+            setGrid((prev)=>{
+                const temp=[];
+                for(let i=0;i<rows;i++){
+                    const row=[];
+                    for(let j=0;j<columns;j++){
+                        const curr=prev[i][j];
+                        if(i!=startRow || j!=startCol ){
+                            curr.isStart=false;
+                        }
+                        row.push(curr);
                     }
-                    row.push(curr);
+                    temp.push(row);
                 }
-                temp.push(row);
-            }
-            return temp;
-        })
+                return temp;
+            })
+        }
     },[startRow])
 
     useEffect(()=>{
-        setGrid((prev)=>{
-            const temp=[];
-            for(let i=0;i<20;i++){
-                const row=[];
-                for(let j=0;j<50;j++){
-                    const curr=prev[i][j];
-                    if(i!=finishRow || j!=finishCol ){
-                        curr.isFinish=false;
+        if(columns && rows && finishRow && finishCol){
+            setGrid((prev)=>{
+                const temp=[];
+                for(let i=0;i<rows;i++){
+                    const row=[];
+                    for(let j=0;j<columns;j++){
+                        const curr=prev[i][j];
+                        if(i!=finishRow || j!=finishCol ){
+                            curr.isFinish=false;
+                        }
+                        row.push(curr);
                     }
-                    row.push(curr);
+                    temp.push(row);
                 }
-                temp.push(row);
-            }
-            return temp;
-        })
+                return temp;
+            })
+        }
     },[finishRow])
 
     function createNode(col,row){
@@ -74,22 +123,24 @@ function App(){
     }
     
     function getInitialGrid(){
-        const temp=[];
-        for(let row=0;row<20;row++){
-            const currentRow=[];
-            for(let col=0;col<50;col++){
-                currentRow.push(createNode(col,row));
+        if(startRow && startCol && finishRow && finishCol){
+            const temp=[];
+            for(let row=0;row<rows;row++){
+                const currentRow=[];
+                for(let col=0;col<columns;col++){
+                    currentRow.push(createNode(col,row));
+                }
+                temp.push(currentRow);
             }
-            temp.push(currentRow);
+            return temp;
         }
-        return temp;
     }
 
     function resetBoard(){
         const temp=getInitialGrid();
         setGrid(temp);
-        for(let row=0;row<20;row++){
-            for(let col=0;col<50;col++){
+        for(let row=0;row<rows;row++){
+            for(let col=0;col<columns;col++){
                 document.getElementById(`node-${row}-${col}`).className ='node';
                 if(row===startRow && col===startCol){
                     document.getElementById(`node-${row}-${col}`).className ='node node-start';
@@ -103,8 +154,8 @@ function App(){
 
     function clearAlgo(grid){
         const temp=getInitialGrid();
-        for(let row=0;row<20;row++){
-            for(let col=0;col<50;col++){
+        for(let row=0;row<rows;row++){
+            for(let col=0;col<columns;col++){
                 if(row===startRow && col===startCol){
                     document.getElementById(`node-${row}-${col}`).className ='node';
                 }
@@ -244,6 +295,7 @@ function App(){
 
     return (
         <>
+        <div ref={ref}>
         <AppBar 
             grid={grid}
             clearAlgo={clearAlgo}
@@ -257,8 +309,9 @@ function App(){
         />
         <InfoBox />
         <div className="description">
-        {desc1?<h5>{desc1}</h5>:null}
-        {cost?<h5>Cost of the path is {cost}</h5>:null}
+        {desc1?<h5>{desc1}</h5>:<h5>Pick an Algorithm and visualize it</h5>}
+        {cost?<h5>Cost of the path is {cost}</h5>:<h5>Drag mouse to draw walls, Hold W and hover to add weights</h5>}
+        </div>
         </div>
         <div className="grid">
             {grid.map(function(row,rowidx){

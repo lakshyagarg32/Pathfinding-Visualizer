@@ -11,11 +11,11 @@ function getAllNodes(grid){
     return nodes;
 }
 
-function getHeuristic(finishNode){
+function getHeuristic(grid,finishNode){
     const heuristic=[];
-    for(let row=0;row<20;row++){
+    for(let row=0;row<grid.length;row++){
         const currentRow=[];
-        for(let col=0;col<50;col++){
+        for(let col=0;col<grid[0].length;col++){
             const curr=Math.abs(row-finishNode.row) + Math.abs(col-finishNode.col);
             currentRow.push(curr);
         }
@@ -57,7 +57,7 @@ function updateUnvisitedNeighbours(node,grid,heuristic){
 }
 
 function astar(grid,startNode,finishNode){
-    const heuristic=getHeuristic(finishNode);
+    const heuristic=getHeuristic(grid,finishNode);
     startNode.distance=0;
     const visitedInOrder=[];
     const unvisitednodes=getAllNodes(grid);
