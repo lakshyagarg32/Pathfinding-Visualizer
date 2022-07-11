@@ -10,8 +10,7 @@ import "./appbar.css"
 import { useState } from 'react';
 
 function BasicExample(props) {
-    const {grid,clearAlgo,resetBoard,startRow,startCol,finishRow,finishCol,setDesc1,setCost}=props;
-    const [working,setWorking]=useState(false);
+    const {grid,clearAlgo,resetBoard,startRow,startCol,finishRow,finishCol,setDesc1,setCost,working,setWorking}=props;
   return (
     <Navbar bg="light" expand="lg" className='appbar'>
       <Container>

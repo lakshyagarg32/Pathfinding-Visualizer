@@ -21,6 +21,7 @@ function App(){
     const [columns,setColumns]=useState(null)
     const [windowHeight,setWindowHeight]=useState(null)
     const [rows,setRows]=useState(null);
+    const [working,setWorking]=useState(false);
 
     useEffect(() => {
         function handleResize(){
@@ -65,46 +66,6 @@ function App(){
             resetBoard();
         }
     },[columns,rows]);
-
-    useEffect(()=>{
-        if(columns && rows){
-            setGrid((prev)=>{
-                const temp=[];
-                for(let i=0;i<rows;i++){
-                    const row=[];
-                    for(let j=0;j<columns;j++){
-                        const curr=prev[i][j];
-                        if(i!=startRow || j!=startCol ){
-                            curr.isStart=false;
-                        }
-                        row.push(curr);
-                    }
-                    temp.push(row);
-                }
-                return temp;
-            })
-        }
-    },[startRow])
-
-    useEffect(()=>{
-        if(columns && rows){
-            setGrid((prev)=>{
-                const temp=[];
-                for(let i=0;i<rows;i++){
-                    const row=[];
-                    for(let j=0;j<columns;j++){
-                        const curr=prev[i][j];
-                        if(i!=finishRow || j!=finishCol ){
-                            curr.isFinish=false;
-                        }
-                        row.push(curr);
-                    }
-                    temp.push(row);
-                }
-                return temp;
-            })
-        }
-    },[finishRow])
 
     function createNode(col,row){
         const node={
@@ -163,6 +124,9 @@ function App(){
     }
 
     function handleKeyDown(event){
+        if(working){
+            return;
+        }
         const {key}=event;
         if(key==='w'){
             setKeyIsPressed(true);
@@ -194,6 +158,15 @@ function App(){
     }
 
     function updateStart(row,col,prow,pcol){
+        setStartRow(()=>{
+            return row;
+        })
+        setStartCol(()=>{
+            return col;
+        })
+        if(grid.length!==0){
+            clearAlgo(grid);
+        }
         setGrid((prev)=>{
             prev[prow][pcol].isStart=false;
             prev[row][col].isStart=true;
@@ -201,16 +174,19 @@ function App(){
             prev[row][col].isWeight=false;
             return prev;
         })
-        setStartRow(()=>{
-            return row;
-        })
-        setStartCol(()=>{
-            return col;
-        })
         return;
     }
 
     function updateFinish(row,col,prow,pcol){
+        setFinishRow(()=>{
+            return row;
+        })
+        setFinishCol(()=>{
+            return col;
+        })
+        if(grid.length!==0){
+            clearAlgo(grid);
+        }
         setGrid((prev)=>{
             prev[prow][pcol].isFinish=false;
             prev[row][col].isFinish=true;
@@ -218,16 +194,13 @@ function App(){
             prev[row][col].isWeight=false;
             return prev;
         })
-        setFinishRow(()=>{
-            return row;
-        })
-        setFinishCol(()=>{
-            return col;
-        })
         return;
     }
 
     function handleMouseDown(row,col){
+        if(working){
+            return;
+        }
         if(row===startRow && col===startCol){
             setStartPress(true);
             return;
@@ -245,6 +218,9 @@ function App(){
     }
 
     function handleMouseEnter(row,col){
+        if(working){
+            return;
+        }
         if(row===startRow && col===startCol){
             return;
         }
@@ -290,6 +266,8 @@ function App(){
             finishCol={finishCol}
             setDesc1={setDesc1}
             setCost={setCost}
+            working={working}
+            setWorking={setWorking}
         />
         <InfoBox />
         <div className="description">
